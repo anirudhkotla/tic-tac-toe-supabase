@@ -29,8 +29,23 @@ A **Tic Tac Toe** application with **Supabase** integration to store game scores
    - Open `index.html` in a web browser.
 
 ## Deployment
-- Deploy the frontend to **GitHub Pages**, **Vercel**, or **Netlify**.
-- Supabase is cloud-hosted, so no additional backend deployment is required.
+### GitHub Pages
+- The repository is configured to deploy automatically to GitHub Pages via a workflow.
+
+### Vercel
+1. **Import the Repository**
+   - Go to [Vercel](https://vercel.com/) and import the `tic-tac-toe-supabase` repository.
+
+2. **Configure Environment Variables**
+   - Add the following environment variables in Vercel:
+     - `SUPABASE_URL`: Your Supabase project URL.
+     - `SUPABASE_ANON_KEY`: Your Supabase anonymous key.
+
+3. **Deploy**
+   - Click **Deploy** to publish the application.
+
+4. **Automate Deployments**
+   - The repository includes a GitHub Actions workflow (`.github/workflows/vercel.yml`) to automate deployments to Vercel on every push to the `main` branch.
 
 ## License
 This project is licensed under the MIT License.
