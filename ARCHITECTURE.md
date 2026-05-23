@@ -1,78 +1,98 @@
-# Architecture Document
+# Architecture for College Attendance System
 
-## 1. System Overview
-The **TericSoft Company Page** is a static website with a dynamic Contact Us form. The website consists of four pages:
-- Home Page
-- About Us Page
-- Projects Page
-- Contact Us Page
+## 1. System Architecture
+The application follows a **client-server architecture** with the following components:
 
-The Contact Us form submits data to a **Supabase database** for storage.
+1. **Frontend**: React with Next.js
+2. **Backend**: Next.js API routes
+3. **Database**: Supabase (PostgreSQL)
+4. **Authentication**: Supabase Auth or OAuth/LDAP
+5. **Hosting**: Vercel
 
 ---
 
-## 2. Architecture Diagram
+## 2. Component Diagram
 ```
-┌─────────────┐       ┌─────────────┐       ┌─────────────┐
-│   User     │       │  Static     │       │  Supabase   │
-│            │──────▶│  Website    │──────▶│  Database   │
-└─────────────┘       └─────────────┘       └─────────────┘
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                                                                               │
+│                                College Attendance System                      │
+│                                                                               │
+└───────────────────┬───────────────────────┬───────────────────────┬───────────┘
+                    │                       │                       │
+                    ▼                       ▼                       ▼
+┌───────────────────────────┐ ┌───────────────────────┐ ┌───────────────────────┐
+│                           │ │                       │ │                       │
+│         Frontend          │ │       Backend         │ │      Database        │
+│ (React + Next.js)         │ │ (Next.js API Routes)  │ │ (Supabase)           │
+│                           │ │                       │ │                       │
+└───────────────┬───────────┘ └───────────┬───────────┘ └───────────┬───────────┘
+                │                       │                       │
+                ▼                       ▼                       ▼
+┌───────────────────────────┐ ┌───────────────────────┐ ┌───────────────────────┐
+│                           │ │                       │ │                       │
+│   User Interface (UI)     │ │   Authentication      │ │   Student Data       │
+│   - Glassmorphism Design  │ │   - OAuth/LDAP        │ │   - Attendance       │
+│   - Responsive Layout     │ │   - Supabase Auth     │ │   - Class Details    │
+│                           │ │                       │ │                       │
+└───────────────────────────┘ └───────────────────────┘ └───────────────────────┘
 ```
 
 ---
 
-## 3. Components
-### 3.1 Frontend
-- **Static Pages**: Home, About Us, Projects, and Contact Us.
-- **Technologies**: HTML, CSS, JavaScript.
-- **Responsibilities**:
-  - Render static content.
-  - Handle client-side routing.
-  - Submit Contact Us form data to Supabase.
-
-### 3.2 Backend
-- **Supabase**: PostgreSQL database for storing contact form submissions.
-- **Responsibilities**:
-  - Store and retrieve contact form data.
-  - Enforce Row-Level Security (RLS) policies.
-
-### 3.3 Deployment
-- **Vercel**: Hosting platform for the static website.
-- **Responsibilities**:
-  - Serve static files.
-  - Configure environment variables for Supabase integration.
+## 3. Data Flow
+1. **User Login**:
+   - User enters credentials → Frontend sends request to Next.js API → API validates credentials with Supabase Auth → Returns JWT token.
+2. **Attendance Marking**:
+   - Faculty selects a class → Frontend sends attendance data to Next.js API → API updates Supabase database → Returns success/failure.
+3. **Attendance Viewing**:
+   - Student requests attendance records → Frontend sends request to Next.js API → API fetches data from Supabase → Returns attendance records.
 
 ---
 
-## 4. Data Flow
-1. User fills out the **Contact Us form** on the website.
-2. Form data is sent to **Supabase** via a JavaScript client.
-3. Supabase stores the data in the **contact_queries** table.
-4. Confirmation is displayed to the user.
+## 4. Technology Stack
+| Component          | Technology                                                                 |
+|--------------------|----------------------------------------------------------------------------|
+| **Frontend**       | React, Next.js, Tailwind CSS, Framer Motion (for glassmorphism effects)   |
+| **Backend**        | Next.js API Routes                                                        |
+| **Database**       | Supabase (PostgreSQL)                                                     |
+| **Authentication** | Supabase Auth / OAuth / LDAP                                              |
+| **Hosting**        | Vercel                                                                    |
+| **Version Control**| GitHub                                                                    |
 
 ---
 
 ## 5. Database Schema
-### 5.1 Table: `contact_queries`
-| Column     | Type      | Description                          |
-|------------|-----------|--------------------------------------|
-| id         | UUID      | Primary key.                         |
-| name       | Text      | Name of the user.                    |
-| email      | Text      | Email of the user.                   |
-| subject    | Text      | Subject of the query.                |
-| message    | Text      | Message content.                     |
-| created_at | Timestamp | Timestamp of submission.             |
+### Tables
 
----
+1. **Users**
+   - `id` (UUID, Primary Key)
+   - `email` (String, Unique)
+   - `role` (String: "student", "faculty", "staff")
+   - `created_at` (Timestamp)
 
-## 6. Security
-- **Row-Level Security (RLS)**: Enabled on the Supabase database to restrict access.
-- **Environment Variables**: Used to store Supabase credentials securely.
-- **Client-Side Validation**: Ensures data integrity before submission.
+2. **Students**
+   - `id` (UUID, Primary Key)
+   - `user_id` (UUID, Foreign Key: Users)
+   - `name` (String)
+   - `roll_number` (String, Unique)
+   - `department` (String)
 
----
+3. **Faculties**
+   - `id` (UUID, Primary Key)
+   - `user_id` (UUID, Foreign Key: Users)
+   - `name` (String)
+   - `department` (String)
 
-## 7. Deployment
-- The website is deployed to **Vercel**.
-- Environment variables are configured in Vercel for Supabase integration.
-- The deployment is tested to ensure functionality.
+4. **Classes**
+   - `id` (UUID, Primary Key)
+   - `faculty_id` (UUID, Foreign Key: Faculties)
+   - `name` (String)
+   - `code` (String, Unique)
+   - `schedule` (String)
+
+5. **Attendance**
+   - `id` (UUID, Primary Key)
+   - `student_id` (UUID, Foreign Key: Students)
+   - `class_id` (UUID, Foreign Key: Classes)
+   - `date` (Date)
+   - `status` (String: "present", "absent", "late")

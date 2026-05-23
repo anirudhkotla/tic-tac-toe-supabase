@@ -1,138 +1,107 @@
-# Implementation Plan
+# Implementation Plan for College Attendance System
 
-## 1. Overview
-This document outlines the step-by-step implementation procedure for the **TericSoft Company Page**. The plan is divided into four phases:
-1. Setup
-2. Frontend Development
-3. Supabase Integration
-4. Deployment
+## 1. Step-by-Step Procedure
 
----
-
-## 2. Phase 1: Setup
-### 2.1 Create Project Directory
-1. Create a new directory for the project:
+### Phase 1: Setup
+1. **Initialize Next.js Project**
    ```bash
-   mkdir tericsoft
-   cd tericsoft
+   npx create-next-app@latest college-attendance-system --typescript
+   cd college-attendance-system
    ```
 
-### 2.2 Initialize Git Repository
-1. Initialize a Git repository:
+2. **Install Dependencies**
    ```bash
-   git init
+   npm install @supabase/supabase-js framer-motion tailwindcss postcss autoprefixer
+   npm install --save-dev @types/node @types/react @types/react-dom
    ```
-2. Connect the repository to the **`tic-tac-toe-supabase`** GitHub repository:
+
+3. **Configure Tailwind CSS**
    ```bash
-   git remote add origin https://github.com/anirudhkotla/tic-tac-toe-supabase.git
+   npx tailwindcss init -p
+   ```
+   Update `tailwind.config.js`:
+   ```javascript
+   module.exports = {
+     content: [
+       "./pages/**/*.{js,ts,jsx,tsx}",
+       "./components/**/*.{js,ts,jsx,tsx}",
+     ],
+     theme: {
+       extend: {
+         colors: {
+           primary: "#6A0DAD", // Purple
+           secondary: "#FFFFFF", // White
+         },
+       },
+     },
+     plugins: [],
+   };
    ```
 
-### 2.3 Set Up Project Structure
-Create the following directory structure:
-```
-/tericsoft
-├── index.html          # Home Page
-├── about.html          # About Us Page
-├── projects.html       # Projects Page
-├── contact.html        # Contact Us Page
-├── styles/
-│   └── main.css        # CSS file
-├── scripts/
-│   └── main.js         # JavaScript file
-└── README.md           # Project documentation
-```
+4. **Set Up Supabase**
+   - Create a Supabase project at [supabase.com](https://supabase.com).
+   - Configure authentication (OAuth/LDAP/Supabase Auth).
+   - Create the database tables as defined in the **Database Schema** section.
 
 ---
 
-## 3. Phase 2: Frontend Development
-### 3.1 Home Page (`index.html`)
-1. Create a basic HTML structure.
-2. Add a navigation bar for linking to other pages.
-3. Add a hero section with a brief introduction to `TericSoft`.
-4. Add call-to-action buttons.
+### Phase 2: Frontend Development
+1. **Create Auth Module**
+   - Implement login page with Supabase Auth.
+   - Redirect users to role-specific dashboards after login.
 
-### 3.2 About Us Page (`about.html`)
-1. Create a basic HTML structure.
-2. Add sections for:
-   - Company history.
-   - Mission and vision.
-   - Team details.
+2. **Create Student Dashboard**
+   - Display attendance records in a table.
+   - Add filters for date range and class.
 
-### 3.3 Projects Page (`projects.html`)
-1. Create a basic HTML structure.
-2. Add a showcase of `TericSoft`'s SAAS products.
-3. Include images, descriptions, and links to products.
+3. **Create Faculty Dashboard**
+   - Implement attendance marking interface.
+   - Add class management features (create, update, delete).
 
-### 3.4 Contact Us Page (`contact.html`)
-1. Create a basic HTML structure.
-2. Add a form with the following fields:
-   - Name (Text input)
-   - Email (Email input)
-   - Subject (Text input)
-   - Message (Textarea)
-3. Add client-side validation for form fields.
-4. Add JavaScript to submit form data to Supabase.
+4. **Create Staff Dashboard**
+   - Implement student and faculty management.
+   - Add report generation features.
 
-### 3.5 Styling (`styles/main.css`)
-1. Use a responsive CSS framework like **Bootstrap** or **TailwindCSS**.
-2. Style the navigation bar, hero section, and form.
-3. Ensure the website is responsive on mobile, tablet, and desktop devices.
-
-### 3.6 JavaScript (`scripts/main.js`)
-1. Add functionality to submit the Contact Us form to Supabase.
-2. Handle form validation and error messages.
+5. **Implement Glassmorphism UI**
+   - Use Tailwind CSS and Framer Motion to create glassmorphism effects.
+   - Apply purple-and-white color palette.
 
 ---
 
-## 4. Phase 3: Supabase Integration
-### 4.1 Create Supabase Project
-1. Log in to Supabase and create a new project.
-2. Note the **Project URL** and **API Key** for later use.
+### Phase 3: Backend Development
+1. **Create Next.js API Routes**
+   - Implement authentication API (`/api/auth`).
+   - Implement attendance API (`/api/attendance`).
+   - Implement class API (`/api/classes`).
+   - Implement student API (`/api/students`).
+   - Implement faculty API (`/api/faculties`).
 
-### 4.2 Create Database Table
-1. Navigate to the **Table Editor** in Supabase.
-2. Create a table named **contact_queries** with the following columns:
-   | Column     | Type      | Description                          |
-   |------------|-----------|--------------------------------------|
-   | id         | UUID      | Primary key.                         |
-   | name       | Text      | Name of the user.                    |
-   | email      | Text      | Email of the user.                   |
-   | subject    | Text      | Subject of the query.                |
-   | message    | Text      | Message content.                     |
-   | created_at | Timestamp | Timestamp of submission.             |
-
-### 4.3 Enable Row-Level Security (RLS)
-1. Navigate to the **Authentication > Policies** section in Supabase.
-2. Enable RLS for the **contact_queries** table.
-3. Create a policy to allow insert operations for authenticated users.
-
-### 4.4 Configure Environment Variables
-1. Create a `.env` file in the project root:
-   ```
-   VITE_SUPABASE_URL=your-supabase-project-url
-   VITE_SUPABASE_KEY=your-supabase-api-key
-   ```
-2. Add `.env` to `.gitignore` to avoid exposing credentials.
+2. **Integrate Supabase**
+   - Connect Next.js API routes to Supabase for database operations.
 
 ---
 
-## 5. Phase 4: Deployment
-### 5.1 Deploy to Vercel
-1. Log in to Vercel and create a new project.
-2. Import the **`tic-tac-toe-supabase`** repository.
-3. Configure environment variables in Vercel:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_KEY`
-4. Deploy the project.
+### Phase 4: Testing
+1. **Unit Testing**
+   - Test individual components and API routes.
+   - Use Jest and React Testing Library.
 
-### 5.2 Test the Deployment
-1. Verify that all pages load correctly.
-2. Test the **Contact Us form** to ensure submissions are stored in Supabase.
-3. Check the website on mobile, tablet, and desktop devices.
+2. **Integration Testing**
+   - Test the interaction between frontend and backend.
+   - Test authentication flow and role-based access.
+
+3. **End-to-End Testing**
+   - Test the complete workflow (login, attendance marking, report generation).
+   - Use Cypress or Playwright.
 
 ---
 
-## 6. Next Steps
-1. Gather content (text, images) for the Home, About Us, and Projects pages.
-2. Implement additional features (e.g., blog, newsletter signup).
-3. Monitor the website for issues and optimize performance.
+### Phase 5: Deployment
+1. **Deploy to Vercel**
+   - Push code to GitHub.
+   - Connect GitHub repository to Vercel.
+   - Configure environment variables for Supabase credentials.
+   - Deploy the application.
+
+2. **Configure Domain**
+   - Set up a custom domain for the application (if required).
