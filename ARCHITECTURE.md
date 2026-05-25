@@ -1,83 +1,99 @@
-# Architecture Document
+# Architecture for TeamFlow
 
-## 1. System Overview
-The **College Attendance System** is a React application built using Next.js APIs. It follows a **client-server architecture** with Supabase as the backend for authentication and database management.
-
----
-
-## 2. Component Diagram
-```mermaid
-flowchart TD
-    A[Client: React/Next.js] -->|API Calls| B[Next.js API Routes]
-    B -->|Authentication| C[Supabase Auth]
-    B -->|Database| D[Supabase Database]
-    A -->|UI| E[Glassmorphism Design]
-```
+**Project Name**: TeamFlow – Internal Project & Task Management Platform
+**Date**: 2026-05-25
+**Author**: SRS Documentation Agent
 
 ---
 
-## 3. Technology Stack
-| Layer          | Technology Stack                          |
-|----------------|-------------------------------------------|
-| Frontend       | React, Next.js, Tailwind CSS              |
-| Backend        | Next.js API Routes                        |
-| Authentication | Supabase Auth                             |
-| Database       | Supabase PostgreSQL                       |
-| Deployment     | Vercel                                   |
+## 1. Overview
+TeamFlow is a full-stack web application built using **Next.js** for both frontend and backend. It uses **TypeScript** for type safety, **Tailwind CSS** for styling, and **REST APIs** for communication between the frontend and backend. The system supports **JWT-based authentication** and **role-based access control**.
 
 ---
 
-## 4. Data Flow
+## 2. System Architecture
+The system follows a **monolithic architecture** with the following components:
+
+1. **Frontend**:
+   - Built with Next.js and React.
+   - Uses Server Components where appropriate.
+   - Styled with Tailwind CSS.
+   - Responsive design with dark/light mode support.
+
+2. **Backend**:
+   - Built with Next.js API Routes.
+   - REST APIs for all project, task, and user operations.
+   - JWT-based authentication.
+   - Input validation and error handling.
+
+3. **Database**:
+   - Supabase (PostgreSQL) for data storage.
+   - Tables for users, projects, tasks, and activity logs.
+
+4. **Authentication**:
+   - JWT tokens for session management.
+   - Password reset via email.
+
+5. **Deployment**:
+   - Containerized using Docker.
+   - Deployed on Vercel or a similar cloud platform.
+
+---
+
+## 3. Data Flow
+
 1. **User Authentication**:
-   - User logs in via Supabase Auth.
-   - Supabase returns a JWT token for session management.
+   - User signs up or logs in.
+   - JWT token is generated and stored in cookies.
+   - Token is used for subsequent API requests.
 
-2. **Attendance Marking**:
-   - Faculty selects a class and marks attendance.
-   - Data is sent to Supabase via Next.js API routes.
+2. **Project Management**:
+   - User creates/edits/deletes a project.
+   - Project data is sent to the backend via REST API.
+   - Backend validates the request and updates the database.
+   - Frontend updates the UI in real-time.
 
-3. **Report Generation**:
-   - Staff/Admin requests attendance reports.
-   - Next.js API fetches data from Supabase and generates reports.
+3. **Task Management**:
+   - User creates/edits/deletes a task.
+   - Task data is sent to the backend via REST API.
+   - Backend validates the request and updates the database.
+   - Frontend updates the UI in real-time.
 
----
-
-## 5. Database Schema
-### 5.1 Tables
-| Table Name   | Description                          | Fields                                                                 |
-|--------------|--------------------------------------|------------------------------------------------------------------------|
-| Users        | User accounts                        | `id`, `name`, `email`, `role`, `created_at`                            |
-| Courses      | College courses                      | `id`, `name`, `code`, `faculty_id`, `created_at`                       |
-| Classes      | Class sessions                       | `id`, `course_id`, `date`, `start_time`, `end_time`, `created_at`      |
-| Attendance   | Attendance records                   | `id`, `class_id`, `student_id`, `status`, `marked_by`, `created_at`    |
+4. **Activity Timeline**:
+   - All actions on projects/tasks are logged in the database.
+   - Activity logs are displayed on the project dashboard.
 
 ---
 
-## 6. API Endpoints
-| Endpoint                     | Method | Description                          |
-|------------------------------|--------|--------------------------------------|
-| `/api/auth/login`            | POST   | User login                          |
-| `/api/auth/logout`           | POST   | User logout                         |
-| `/api/attendance/mark`       | POST   | Mark attendance for a student       |
-| `/api/attendance/report`     | GET    | Generate attendance report          |
-| `/api/courses`               | GET    | List all courses                    |
-| `/api/classes`               | GET    | List all classes for a course       |
+## 4. Component Breakdown
+| Component          | Responsibilities                                                                 |
+|--------------------|---------------------------------------------------------------------------------|
+| **Frontend**       | Render UI, handle user interactions, communicate with backend via REST APIs.    |
+| **Backend**        | Handle API requests, validate inputs, interact with the database.               |
+| **Database**       | Store user, project, task, and activity data.                                   |
+| **Authentication** | Manage user sessions, generate JWT tokens, handle password resets.              |
+| **Deployment**     | Containerize the application, deploy to cloud platform.                         |
 
 ---
 
-## 7. UI Components
-| Component               | Description                          |
-|------------------------|--------------------------------------|
-| Login Page             | User authentication                  |
-| Dashboard              | Role-based dashboard                 |
-| Attendance Marking     | Faculty marks attendance             |
-| Attendance Report      | Generate and view reports            |
-| Profile Management     | Update user profile                  |
+## 5. API Endpoints
+| Method | Endpoint                  | Description                                      |
+|--------|---------------------------|--------------------------------------------------|
+| POST   | `/api/auth/login`         | Log in a user.                                   |
+| POST   | `/api/auth/register`      | Register a new user.                             |
+| GET    | `/api/projects`           | Get all projects for the authenticated user.     |
+| POST   | `/api/projects`           | Create a new project.                            |
+| GET    | `/api/tasks`              | Get all tasks for a project.                     |
+| POST   | `/api/tasks`              | Create a new task.                               |
+| PUT    | `/api/tasks/:id`          | Update a task.                                   |
+| DELETE | `/api/tasks/:id`          | Delete a task.                                   |
 
 ---
 
-## 8. Deployment Strategy
-1. **Frontend**: Deploy React/Next.js app on Vercel.
-2. **Backend**: Next.js API routes hosted on Vercel.
-3. **Database**: Supabase PostgreSQL.
-4. **Environment Variables**: Store Supabase credentials in Vercel environment variables.
+## 6. Database Schema
+| Table      | Fields                                                                       |
+|------------|------------------------------------------------------------------------------|
+| Users      | `id`, `name`, `email`, `password_hash`, `role`, `created_at`, `updated_at`   |
+| Projects   | `id`, `name`, `description`, `start_date`, `end_date`, `created_at`, `updated_at` |
+| Tasks      | `id`, `title`, `description`, `status`, `priority`, `due_date`, `assignee_id`, `project_id`, `created_at`, `updated_at` |
+| Activity   | `id`, `user_id`, `action`, `entity_type`, `entity_id`, `created_at`          |

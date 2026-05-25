@@ -1,142 +1,132 @@
-# Implementation Plan
+# Implementation Plan for TeamFlow
+
+**Project Name**: TeamFlow – Internal Project & Task Management Platform
+**Date**: 2026-05-25
+**Author**: SRS Documentation Agent
+
+---
 
 ## 1. Overview
-This document outlines the step-by-step implementation plan for the **College Attendance System**. The plan is divided into phases: **Setup**, **Frontend Development**, **Backend Development**, **Testing**, and **Deployment**.
+This document outlines the step-by-step implementation procedure for TeamFlow. The plan is divided into **modules**, with each module representing a discrete unit of work.
 
 ---
 
-## 2. Phase 1: Setup
-### 2.1 Repository Setup
-1. Create a new GitHub repository for the project.
-2. Clone the repository locally.
-3. Initialize a Next.js project:
-   ```bash
-   npx create-next-app@latest college-attendance-system
-   cd college-attendance-system
-   ```
-
-### 2.2 Supabase Setup
-1. Create a new project in Supabase.
-2. Set up the database schema using the provided schema in `ARCHITECTURE.md`.
-3. Configure Supabase Auth for user authentication.
-4. Store Supabase credentials in `.env.local`:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
-
-### 2.3 Design Setup
-1. Install Tailwind CSS for styling:
-   ```bash
-   npm install -D tailwindcss postcss autoprefixer
-   npx tailwindcss init
-   ```
-2. Configure `tailwind.config.js` for glassmorphism and purple/white color palette:
-   ```js
-   module.exports = {
-     content: ["./src/**/*.{js,ts,jsx,tsx}"],
-     theme: {
-       extend: {
-         colors: {
-           primary: '#6A0DAD', // Purple
-           secondary: '#FFFFFF', // White
-         },
-       },
-     },
-     plugins: [],
-   }
-   ```
+## 2. Modules and Responsibilities
+| Module                  | Responsibilities                                                                 |
+|-------------------------|---------------------------------------------------------------------------------|
+| **Authentication**      | Implement signup, login, logout, and password reset functionality.              |
+| **Dashboard**           | Create a dashboard with project overview and recent activity.                   |
+| **Project Management**  | Implement project creation, editing, archiving, and deletion.                   |
+| **Task Management**     | Implement task creation, assignment, status updates, and filtering.             |
+| **Team Management**     | Implement team member invitation and role assignment.                           |
+| **Activity Timeline**   | Implement logging and display of project/task activities.                       |
+| **Search and Filter**   | Implement search and filter functionality for projects and tasks.               |
+| **UI/UX**               | Implement responsive design with dark/light mode and Tailwind CSS.              |
+| **APIs**                | Implement REST APIs for all project, task, and user operations.                 |
+| **Testing**             | Write unit tests for critical functionality.                                    |
+| **Docker**              | Containerize the application for deployment.                                    |
 
 ---
 
-## 3. Phase 2: Frontend Development
-### 3.1 UI Components
-1. **Login Page**:
-   - Implement Supabase Auth for login/logout.
-   - Use glassmorphism design for the login form.
+## 3. Step-by-Step Implementation Procedure
 
-2. **Dashboard**:
-   - Role-based dashboards for students, faculties, and staff.
-   - Display attendance summary and quick actions.
+### Phase 1: Setup and Authentication
+1. **Initialize the Project**:
+   - Create a new Next.js project with TypeScript.
+   - Install Tailwind CSS and configure it.
+   - Set up ESLint and Prettier for code formatting.
 
-3. **Attendance Marking**:
-   - Faculty can select a class and mark attendance.
-   - Use a table layout for student lists.
-
-4. **Attendance Report**:
-   - Generate and display attendance reports.
-   - Filter reports by date, course, and student.
-
-5. **Profile Management**:
-   - Allow users to update their profile information.
-
-### 3.2 Styling
-- Use Tailwind CSS for styling.
-- Implement glassmorphism using backdrop filters:
-  ```css
-  .glassmorphism {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-  ```
+2. **Implement Authentication**:
+   - Set up Supabase for user authentication.
+   - Create API routes for `/api/auth/login`, `/api/auth/register`, and `/api/auth/logout`.
+   - Implement JWT token generation and validation.
+   - Create signup and login pages.
+   - Implement password reset functionality.
 
 ---
 
-## 4. Phase 3: Backend Development
-### 4.1 API Routes
-1. **Authentication**:
-   - Implement `/api/auth/login` and `/api/auth/logout` using Supabase Auth.
+### Phase 2: Dashboard and Project Management
+3. **Create the Dashboard**:
+   - Design the dashboard layout using Tailwind CSS.
+   - Fetch and display project overview data from the backend.
+   - Implement navigation to projects and tasks.
 
-2. **Attendance**:
-   - Implement `/api/attendance/mark` to mark attendance.
-   - Implement `/api/attendance/report` to generate reports.
-
-3. **Courses and Classes**:
-   - Implement `/api/courses` and `/api/classes` to fetch course and class data.
-
-### 4.2 Database Integration
-- Use Supabase client to interact with the database:
-  ```js
-  import { createClient } from '@supabase/supabase-js';
-  
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  ```
+4. **Implement Project Management**:
+   - Create API routes for `/api/projects`.
+   - Implement project creation, editing, archiving, and deletion.
+   - Create a project list view and project detail view.
 
 ---
 
-## 5. Phase 4: Testing
-### 5.1 Unit Testing
-- Test individual components using Jest and React Testing Library.
-- Test API routes using Jest.
-
-### 5.2 Integration Testing
-- Test the interaction between frontend and backend.
-- Test Supabase Auth and database operations.
-
-### 5.3 End-to-End Testing
-- Test the complete workflow using Cypress.
-- Test user roles and permissions.
+### Phase 3: Task Management
+5. **Implement Task Management**:
+   - Create API routes for `/api/tasks`.
+   - Implement task creation, editing, and deletion.
+   - Add support for task statuses (To Do, In Progress, Review, Done).
+   - Add support for priority levels (Low, Medium, High).
+   - Implement task assignment and due dates.
 
 ---
 
-## 6. Phase 5: Deployment
-### 6.1 Vercel Deployment
-1. Push the code to GitHub.
-2. Import the repository into Vercel.
-3. Configure environment variables in Vercel.
-4. Deploy the application.
+### Phase 4: Team Management and Activity Timeline
+6. **Implement Team Management**:
+   - Create API routes for team member invitation and role assignment.
+   - Implement a team member list view and profile pages.
 
-### 6.2 Supabase Configuration
-1. Ensure Supabase database is accessible from Vercel.
-2. Configure Row-Level Security (RLS) policies in Supabase.
+7. **Implement Activity Timeline**:
+   - Log all actions on projects and tasks in the database.
+   - Display activity logs on the project dashboard.
 
 ---
 
-## 7. Next Steps
-1. Assign tasks to junior developers for frontend and backend development.
-2. Assign testing tasks to QA agents.
-3. Assign deployment tasks to the DevOps agent.
+### Phase 5: Search, Filter, and UI/UX
+8. **Implement Search and Filter**:
+   - Add search functionality for projects and tasks.
+   - Implement filters for status, priority, and assignee.
+
+9. **Implement UI/UX**:
+   - Ensure the UI is responsive and works on all devices.
+   - Implement dark/light mode toggle.
+   - Use Tailwind CSS for styling.
+
+---
+
+### Phase 6: Testing and Deployment
+10. **Write Unit Tests**:
+    - Write unit tests for critical functionality (e.g., authentication, API routes).
+    - Use Jest and React Testing Library.
+
+11. **Containerize the Application**:
+    - Create a `Dockerfile` for the application.
+    - Test the Docker container locally.
+
+12. **Deploy the Application**:
+    - Deploy the application to Vercel or a similar cloud platform.
+    - Set up environment variables for Supabase and other services.
+
+---
+
+## 4. Acceptance Criteria
+1. All functional requirements are implemented and tested.
+2. The system is responsive and supports dark/light mode.
+3. The system includes unit tests for critical functionality.
+4. The system is containerized using Docker.
+5. API documentation is provided.
+6. The system is deployed and accessible to users.
+
+---
+
+## 5. Assumptions
+1. Supabase is used for authentication and database operations.
+2. The application is deployed on Vercel.
+3. Tailwind CSS is used for styling.
+
+---
+
+## 6. Risks and Mitigation
+| Risk                          | Mitigation Strategy                                      |
+|-------------------------------|----------------------------------------------------------|
+| Scope creep                   | Stick to the defined requirements and prioritize features. |
+| Security vulnerabilities      | Use JWT for authentication and validate all inputs.      |
+| Performance bottlenecks       | Optimize database queries and use server-side rendering. |
+| UI/UX inconsistencies         | Use a design system and Tailwind CSS for consistency.    |
